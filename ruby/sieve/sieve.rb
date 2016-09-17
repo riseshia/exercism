@@ -1,25 +1,33 @@
 class Sieve
-  attr_accessor :limit
+  attr_accessor :primes
 
   def initialize(limit)
-    self.limit = limit
-  end
-
-  def primes
-    return [] if limit < 2
-    return [2] if limit == 2
-    generate_primes
+    self.primes = generate_primes(limit)
   end
 
   private
   
-  def generate_primes
-    (3..limit).each_with_object([2]) do |n, primes|
-      primes << n if prime?(n, primes)
+  def generate_primes(limit)
+    return [] if limit < 2
+
+    primes = []
+    candidates = (2..limit).to_a
+
+    loop do
+      next_prime = candidates.shift
+      primes << next_prime
+      candidates = reject_candidates(candidates, next_prime)
+
+      break if next_prime > last_num_to_be_judged(limit)
     end
+    primes + candidates
   end
 
-  def prime?(n, primes)
-    primes.all? { |prime| n % prime != 0 } 
+  def reject_candidates(candidates, prime)
+    candidates.reject { |number| number % prime == 0 }
+  end
+
+  def last_num_to_be_judged(limit)
+    Math.sqrt(limit).to_i
   end
 end
