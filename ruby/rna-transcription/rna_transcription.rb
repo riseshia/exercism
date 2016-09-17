@@ -1,6 +1,7 @@
 module Complement
   module_function
-  COMPLEMENT_TABLE = {
+
+  RNA_TO_DNA = {
     "G" => "C",
     "C" => "G",
     "T" => "A",
@@ -8,9 +9,16 @@ module Complement
   }.freeze
 
   def of_dna(string)
-    string.chars.map { |char| COMPLEMENT_TABLE.fetch(char) }.join("")
-  rescue # invalid
-    ""
+    is_valid?(string) ? translate(string) : ""
+  end
+  
+  def translate(string)
+    string.chars.map { |char| RNA_TO_DNA.fetch(char) }.join("")
+  end
+
+  def is_valid?(string)
+    permitted = string.chars.reject { |char| RNA_TO_DNA[char].nil? }
+    string.size == permitted.size
   end
 end
 
