@@ -16,11 +16,11 @@ module Complement
     private
 
     def translate(strand)
-      strand.each_char.map { |nucleotide| RNA_TO_DNA[nucleotide] }.join
+      strand.each_char.map { |char| RNA_TO_DNA[char] }.join
     end
 
     def dna?(strand)
-      strand.each_char.all? { |nucleotide| RNA_TO_DNA.key? nucleotide }
+      strand.each_char.all? { |char| RNA_TO_DNA.key? char }
     end
   end
 end
