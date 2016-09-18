@@ -8,17 +8,20 @@ module Complement
     "A" => "U"
   }.freeze
 
-  def of_dna(string)
-    is_valid?(string) ? translate(string) : ""
-  end
-  
-  def translate(string)
-    string.chars.map { |char| RNA_TO_DNA.fetch(char) }.join("")
+  def of_dna(strand)
+    dna?(strand) ? translate(strand) : ""
   end
 
-  def is_valid?(string)
-    permitted = string.chars.reject { |char| RNA_TO_DNA[char].nil? }
-    string.size == permitted.size
+  class << self
+    private
+
+    def translate(strand)
+      strand.each_char.map { |char| RNA_TO_DNA[char] }.join
+    end
+
+    def dna?(strand)
+      strand.each_char.all? { |char| RNA_TO_DNA.key? char }
+    end
   end
 end
 
