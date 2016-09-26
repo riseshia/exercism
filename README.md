@@ -1,3 +1,3 @@
 # Exercism Solution
 
-Solution of my exercism :D
+Solution of my exercism.io :D
