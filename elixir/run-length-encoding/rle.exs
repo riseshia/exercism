@@ -1,6 +1,6 @@
 defmodule RunLengthEncoder do
   @encode_reg ~r{(\w)\1*}
-  @decode_reg ~r{(\d+)([A-Z]+)}
+  @decode_reg ~r{(\d+)([A-Z])}
 
   @doc """
   Generates a string where consecutive elements are represented as a data value and count.

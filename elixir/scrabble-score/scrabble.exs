@@ -18,7 +18,7 @@ defmodule Scrabble do
     word
     |> String.upcase
     |> String.codepoints
-    |> Enum.map(&(Map.get(@dictionary, &1, 0)))
+    |> Enum.map(&Map.get(@dictionary, &1, 0))
     |> Enum.sum
   end
 end
