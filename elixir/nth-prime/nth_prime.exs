@@ -1,5 +1,4 @@
 defmodule Prime do
-  @first_prime 2
   @start_number 2
 
   @doc """
@@ -12,14 +11,11 @@ defmodule Prime do
   end
 
   defp find_prime([target | _], _, 0), do: target
-  defp find_prime([], @first_prime, remained_count) do
-    find_prime([@first_prime], @first_prime + 1, remained_count - 1)
-  end
   defp find_prime(primes, number, remained_count) do
     if prime?(primes, number) do
-      find_prime([number | primes], number + 2, remained_count - 1)
+      find_prime([number | primes], number + 1, remained_count - 1)
     else
-      find_prime(primes, number + 2, remained_count)
+      find_prime(primes, number + 1, remained_count)
     end
   end
 
