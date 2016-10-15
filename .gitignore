@@ -119,6 +119,8 @@ jspm_packages
 # Optional npm cache directory
 .npm
 
+# Optional cache from babel
+
 # Optional eslint cache
 .eslintcache
 
