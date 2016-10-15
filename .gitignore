@@ -120,6 +120,7 @@ jspm_packages
 .npm
 
 # Optional cache from babel
+babel-output
 
 # Optional eslint cache
 .eslintcache
