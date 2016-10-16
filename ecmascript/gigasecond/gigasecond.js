@@ -1,8 +1,8 @@
-class gigasecond {
+class Gigasecond {
   constructor(date) {
     this.gigasecond = 1000000000000 
 
-    this.date_after_gigasecond = new date(Number(date) + this.gigasecond)
+    this.date_after_gigasecond = new Date(Number(date) + this.gigasecond)
   }
 
   date() {
@@ -10,4 +10,5 @@ class gigasecond {
   }
 }
 
-module.exports = gigasecond
+export default Gigasecond
+
