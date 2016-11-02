@@ -12,17 +12,8 @@ class PhoneNumber {
   }
 
   filterNumber(string) {
-    return [...string].filter((char) => {
-             switch(char) {
-               case "(":
-               case ")":
-               case " ":
-               case "-":
-               case ".":
-                 return false
-               default:
-                 return true
-             }
+    return [...string].filter(oneChar => {
+             return oneChar.match(/[()\s.-]/) ? false : true
            }).join("")
   }
 
