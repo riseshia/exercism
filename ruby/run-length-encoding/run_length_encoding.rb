@@ -3,11 +3,12 @@ module RunLengthEncoding
 
   def encode(string)
     encoded = ""
+    next_idx = 0
+
     loop do
-      break if string.empty?
-      next_string, char, count = encode_consume(string)
-      encoded += encode_string(count, char)
-      string = next_string
+      break if next_idx >= string.size
+      next_idx, char, count = encode_consume(string, next_idx)
+      encoded << encode_string(count, char)
     end
 
     encoded
@@ -19,33 +20,40 @@ module RunLengthEncoding
     loop do
       break if string.empty?
       next_string, char, count = decode_consume(string)
-      decoded += decode_string(count, char)
+      decoded << decode_string(count, char)
       string = next_string
     end
 
     decoded
   end
 
-  def encode_string(count, char)
-    count != 1 ? "#{count}#{char}" : char
-  end
+  class << self
+    def encode_string(count, char)
+      count != 1 ? "#{count}#{char}" : char
+    end
 
-  def encode_consume(string)
-    char = string[0]
-    next_string = string.sub(/(.)\1*/, "")
-    [next_string, char, string.size - next_string.size]
-  end
+    def encode_consume(string, idx)
+      char = string[idx]
+      pointer = idx + 1
+      loop do
+        break unless string[pointer] == char
+        pointer += 1
+      end
 
-  def decode_string(count, char)
-    char * count
-  end
+      [pointer, char, pointer - idx]
+    end
 
-  def decode_consume(string)
-    matched = string.match(/(\d*)(.)/)
-    count = matched[1].empty? ? 1 : matched[1]
-    char = matched[2]
-    next_string = string.sub(/\d*./, "")
-    [next_string, char, count.to_i]
+    def decode_string(count, char)
+      char * count
+    end
+
+    def decode_consume(string)
+      matched = string.match(/(?<num_of_char>\d*)(?<char>.)/)
+      count = matched[:num_of_char].empty? ? 1 : matched[:num_of_char]
+      char = matched[:char]
+      next_string = string.sub(/\d*./, "")
+      [next_string, char, count.to_i]
+    end
   end
 end
 
