@@ -13,7 +13,7 @@ class PhoneNumber {
 
   filterNumber(string) {
     return [...string].filter(oneChar => {
-             return oneChar.match(/[()\s.-]/) ? false : true
+             return oneChar.match(/\d/) ? true : false
            }).join("")
   }
 
