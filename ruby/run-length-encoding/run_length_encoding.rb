@@ -48,9 +48,8 @@ module RunLengthEncoding
     end
 
     def decode_consume(string)
-      matched = string.match(/(?<num_of_char>\d*)(?<char>.)/)
-      count = matched[:num_of_char].empty? ? 1 : matched[:num_of_char]
-      char = matched[:char]
+      /(?<num_of_char>\d*)(?<char>.)/ =~ string
+      count = num_of_char.empty? ? 1 : num_of_char
       next_string = string.sub(/\d*./, "")
       [next_string, char, count.to_i]
     end
