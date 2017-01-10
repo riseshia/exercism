@@ -1,14 +1,14 @@
 class Clock:
     def __init__(self, hour, minute):
-        self.__adjust(hour, minute)
+        self._adjust(hour, minute)
 
     # Public method
     def add(self, minute):
-        self.__adjust(self.hour, self.minute + minute)
+        self._adjust(self.hour, self.minute + minute)
         return self
 
     # Private method
-    def __adjust(self, hour, minute):
+    def _adjust(self, hour, minute):
         total_minute = hour * 60 + minute
 
         self.minute = total_minute % 60
