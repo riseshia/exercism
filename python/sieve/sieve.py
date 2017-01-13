@@ -1,10 +1,10 @@
 def sieve(number):
+    candidates = list(range(2, number + 1))
     primes = []
-    candidates = range(2, number + 1)
 
-    while len(candidates) > 0:
-        prime = candidates[0]
+    while candidates:
+        prime = candidates.pop(0)
         primes.append(prime)
-        candidates = [n for n in candidates[1:] if n % prime != 0]
+        candidates = [n for n in candidates if n % prime != 0]
 
     return primes
