@@ -12,8 +12,8 @@ plant = {
 class Garden:
     def __init__(self, locations, students=children):
         self.locations = locations.split('\n')
+        students.sort()
         self.students = students
-        self.students.sort()
 
     def plants(self, name):
         idx = self.students.index(name) * 2
