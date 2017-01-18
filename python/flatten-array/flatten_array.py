@@ -1,12 +1,12 @@
-def flatten(lists):
-    return _flatten(lists)
+def flatten(els):
+    return _flatten(els)
 
 def _flatten(el):
     l = []
     for el in el:
-        if isinstance(el, list):
+        if isinstance(el, (list, tuple)):
             l += _flatten(el)
-        elif isinstance(el, tuple) or el is None:
+        elif el is None:
             pass
         else:
             l.append(el)
