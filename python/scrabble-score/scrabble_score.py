@@ -10,8 +10,7 @@ score_table = {
 }
 
 def score(string):
-    chars = [c for c in string.lower() if c in ascii_lowercase]
-    if len(chars) != len(string) or len(chars) == 0:
+    if not string.isalpha():
         return 0
 
-    return sum(score_table[c] for c in chars)
+    return sum(score_table[c] for c in string.lower())
