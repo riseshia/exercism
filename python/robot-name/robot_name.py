@@ -13,10 +13,5 @@ class Robot:
     def _generate_name(self):
         random.seed(time.time())
 
-        name = ''
-        name += ascii_uppercase[random.randint(0, 25)]
-        name += ascii_uppercase[random.randint(0, 25)]
-        name += f'{random.randint(0,9)}'
-        name += f'{random.randint(0,9)}'
-        name += f'{random.randint(0,9)}'
-        return name
+        return ''.join(random.choices(ascii_uppercase, k=2)) \
+               + '{:3d}'.format(random.randint(0,999))
