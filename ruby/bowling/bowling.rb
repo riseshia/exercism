@@ -12,7 +12,7 @@ class Game
 
   def roll(pins)
     raise BowlingError.new('Game is finished') if finished?
-    raise BowlingError.new('pins should be positive') if pins.negative?
+
     lane.remove(pins)
     current_frame.roll(pins)
     finished_frames.last(2).map { |r| r.bonus_score(pins) }
@@ -30,7 +30,7 @@ class Game
   attr_writer :finished_frames, :current_frame, :lane
 
   def setup_frame
-    self.current_frame = Frame.new(finished_frames.size + 1)
+    self.current_frame = FrameFactory.of(finished_frames.size + 1)
     lane.reset
   end
 
@@ -44,13 +44,14 @@ class Game
   end
 end
 
+# Lane
 class Lane
   attr_reader :pins
 
   INIT_PINS = 10
 
   def initialize
-    self.pins = INIT_PINS
+    reset
   end
 
   def reset
@@ -58,6 +59,8 @@ class Lane
   end
 
   def remove(removed_pins)
+    raise Game::BowlingError.new('pins should be positive') \
+      if removed_pins.negative?
     self.pins -= removed_pins
 
     if pins.negative?
@@ -72,8 +75,19 @@ class Lane
   attr_writer :pins
 end
 
-# Frame
-class Frame
+module FrameFactory
+  module_function
+
+  def of(number)
+    if number == 10
+      FrameTen.new(number)
+    else
+      Frame.new(number)
+    end
+  end
+end
+
+class BaseFrame
   attr_reader :score, :roll_try, :bonus, :number
 
   def initialize(number)
@@ -83,12 +97,14 @@ class Frame
   end
 
   def roll(pins)
+    before_roll
     self.roll_try += 1
     self.score += pins
-    if number == 10 && bonus
-      self.bonus -= 1
-    end
     judge
+  end
+
+  # Hook
+  def before_roll
   end
 
   def bonus_score(pins)
@@ -99,11 +115,7 @@ class Frame
   end
 
   def finished?
-    if number != 10
-      bonus
-    else
-      bonus && bonus.zero?
-    end
+    bonus
   end
 
   private
@@ -132,6 +144,21 @@ class Frame
 
   def nothing?
     roll_try == 2 && score < 10
+  end
+end
+
+# Frame
+class Frame < BaseFrame
+end
+
+# FrameTen
+class FrameTen < BaseFrame
+  def before_roll
+    self.bonus -= 1 if bonus
+  end
+
+  def finished?
+    bonus && bonus.zero?
   end
 end
 
