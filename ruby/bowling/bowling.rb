@@ -15,7 +15,7 @@ class Game
 
     lane.remove(pins)
     current_frame.roll(pins)
-    finished_frames.last(2).map { |r| r.bonus_score(pins) }
+    finished_frames.last(2).map { |f| f.bonus_score(pins) }
 
     next_frame if current_frame.finished?
   end
@@ -80,18 +80,18 @@ module FrameFactory
 
   def of(number)
     if number == 10
-      FrameTen.new(number)
+      FrameTen.new
     else
-      Frame.new(number)
+      Frame.new
     end
   end
 end
 
+# BaseFrame
 class BaseFrame
-  attr_reader :score, :roll_try, :bonus, :number
+  attr_reader :score, :roll_try, :judged
 
-  def initialize(number)
-    self.number = number
+  def initialize
     self.roll_try = 0
     self.score = 0
   end
@@ -104,61 +104,103 @@ class BaseFrame
   end
 
   # Hook
-  def before_roll
-  end
+  def before_roll; end
 
-  def bonus_score(pins)
-    if bonus.nonzero?
-      self.score += pins
-      self.bonus -= 1
-    end
-  end
+  # Override needed
+  def bonus_score(pins); end
 
-  def finished?
-    bonus
-  end
+  # Override needed
+  def finished?; end
 
   private
 
-  attr_writer :score, :roll_try, :bonus, :number
+  attr_writer :score, :roll_try, :judged
 
-  def judge
-    return if bonus
-    self.bonus =
-      if strike?
-        2
-      elsif spare?
-        1
-      elsif nothing?
-        0
-      end
-  end
+  # Override needed
+  def judge; end
 
   def strike?
-    roll_try == 1 && score == 10
+    first_try? && defeat_all?
   end
 
   def spare?
-    roll_try == 2 && score == 10
+    second_try? && defeat_all?
   end
 
   def nothing?
-    roll_try == 2 && score < 10
+    second_try? && !defeat_all?
+  end
+
+  def first_try?
+    roll_try == 1
+  end
+
+  def second_try?
+    roll_try == 2
+  end
+
+  def defeat_all?
+    score == 10
+  end
+
+  def needed_bonus
+    if strike?
+      2
+    elsif spare?
+      1
+    elsif nothing?
+      0
+    end
   end
 end
 
 # Frame
 class Frame < BaseFrame
+  attr_reader :num_of_bonus
+
+  def bonus_score(pins)
+    if judged && num_of_bonus > 0
+      self.score += pins
+      self.num_of_bonus -= 1
+    end
+  end
+
+  def finished?
+    judged
+  end
+  private
+
+  attr_writer :num_of_bonus
+
+  def judge
+    return if judged
+
+    self.num_of_bonus = needed_bonus
+    self.judged = !num_of_bonus.nil?
+  end
 end
 
 # FrameTen
 class FrameTen < BaseFrame
+  attr_reader :bonus_roll
+
   def before_roll
-    self.bonus -= 1 if bonus
+    self.bonus_roll -= 1 if judged && bonus_roll > 0
   end
 
   def finished?
-    bonus && bonus.zero?
+    judged && bonus_roll.zero?
+  end
+
+  private
+
+  attr_writer :bonus_roll
+
+  def judge
+    return if judged
+
+    self.bonus_roll = needed_bonus
+    self.judged = !bonus_roll.nil?
   end
 end
 
