@@ -2,12 +2,11 @@
 class Bst
   VERSION = 1
 
-  attr_accessor :data, :left, :right
+  attr_reader :data, :left, :right
 
   def initialize(data)
     self.data = data
-    self.left = nil
-    self.right = nil
+    self.left = self.right = EmptyNode.instance
   end
 
   def insert(new_data)
@@ -19,31 +18,49 @@ class Bst
   end
 
   def each(&block)
-    if block_given?
-      traverse(&block)
-    else
-      arr = []
-      each { |e| arr << e }
-      arr.to_enum
-    end
+    return enum_for(:each) { size } unless block_given?
+
+    left.each(&block)
+    yield(data)
+    right.each(&block)
+
+    self
   end
 
-  def traverse(&block)
-    left.traverse(&block) if left
-    yield(data)
-    right.traverse(&block) if right
+  def data?
+    true
   end
 
   private
 
-  [:left, :right].each do |dir|
-    define_method("insert_#{dir}") do |new_data|
-      dir_data = send(dir)
-      if dir_data
-        dir_data.insert(new_data)
-      else
-        send("#{dir}=", self.class.new(new_data))
-      end
+  attr_writer :data, :left, :right
+
+  def insert_left(new_data)
+    if left.data?
+      left.insert(new_data)
+    else
+      self.left = self.class.new(new_data)
     end
+  end
+
+  def insert_right(new_data)
+    if right.data?
+      right.insert(new_data)
+    else
+      self.right = self.class.new(new_data)
+    end
+  end
+end
+
+# Empty Leaf node
+class EmptyNode
+  def self.instance
+    @_instance ||= new
+  end
+
+  def each(&block); end
+
+  def data?
+    false
   end
 end
