@@ -18,7 +18,7 @@ class Bst
   end
 
   def each(&block)
-    return enum_for(:each) { size } unless block_given?
+    return enum_for(:each) unless block_given?
 
     left.each(&block)
     yield(data)
@@ -26,6 +26,8 @@ class Bst
 
     self
   end
+
+  protected
 
   def data?
     true
@@ -50,17 +52,17 @@ class Bst
       self.right = self.class.new(new_data)
     end
   end
-end
 
-# Empty Leaf node
-class EmptyNode
-  def self.instance
-    @_instance ||= new
-  end
+  # Empty Leaf node
+  class EmptyNode
+    def self.instance
+      @_instance ||= new
+    end
 
-  def each(&block); end
+    def each(&block); end
 
-  def data?
-    false
+    def data?
+      false
+    end
   end
 end
