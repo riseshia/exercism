@@ -65,4 +65,6 @@ class Bst
       false
     end
   end
+
+  private_constant :EmptyNode
 end
