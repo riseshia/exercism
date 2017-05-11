@@ -23,25 +23,21 @@ class MapperGenerater
 
   private
 
+  def pattern(number_of_rail)
+    (0..(number_of_rail - 1)).to_a + (1..(number_of_rail - 2)).to_a.reverse
+  end
+
   def generate_map(size, number_of_rail)
     raw = (0...size).to_a
     rails = Array.new(number_of_rail) { [] }
-    delta = 1
+    rail_idxs = pattern(number_of_rail).cycle.first(size)
     rail_idx = 0
 
-    raw.each do |pos_idx|
+    raw.zip(rail_idxs).each do |pos_idx, rail_idx|
       rails[rail_idx] << pos_idx
-
-      rail_idx += delta
-      if rail_idx == number_of_rail || rail_idx == -1
-        delta *= -1
-        jump = [2, number_of_rail].min
-        rail_idx += delta * jump
-      end
     end
     rails.flatten
   end
-
 end
 
 module RailFenceCipher
