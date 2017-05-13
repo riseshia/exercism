@@ -1,26 +1,16 @@
-module MyFlatten
-  refine Array do
-    def my_flatten
-      self.inject([]) do |arr, val|
-        arr.concat(val.my_flatten)
-      end
-    end
-  end
-
-  refine Integer do
-    def my_flatten
-      [self]
-    end
-  end
-
-  refine NilClass do
-    def my_flatten
-      []
+class Array
+  def my_flatten
+    inject([]) do |arr, val|
+      next_arr = \
+        if val.respond_to?(:my_flatten)
+          val.my_flatten
+        else
+          [val].compact
+        end
+      arr.concat(next_arr)
     end
   end
 end
-
-using MyFlatten
 
 module FlattenArray
   VERSION = 1
