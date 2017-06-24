@@ -9,7 +9,7 @@ type Triangle
     | Scalene
 
 
-validateInequality : List comparable -> Bool
+validateInequality : List Float -> Bool
 validateInequality list =
     case List.maximum list of
         Just x ->
@@ -32,7 +32,7 @@ sizeToKind size =
             (Ok Scalene)
 
 
-triangleKind : comparable -> comparable -> comparable -> Result String Triangle
+triangleKind : Float -> Float -> Float -> Result String Triangle
 triangleKind a b c =
     let
         list =
