@@ -4,55 +4,34 @@ import Data.Char
 
 decode :: String -> String
 decode "" = ""
-decode encodedText = decodeRec encodedText ""
+decode encodedText = reverse $ decodeR encodedText ""
 
-decodeRec :: String -> String -> String
-decodeRec "" rawText = rawText
-decodeRec encodedText rawText =
-  let (digits, char, tail) = consumeToken encodedText 0
-      rawToken = decodeToken digits char
+decodeR :: String -> String -> String
+decodeR "" rawText = rawText
+decodeR encodedText rawText =
+  let (digits, (head:tail)) = span isNumber encodedText
   in
-    decodeRec tail (rawText ++ rawToken)
+    decodeR tail $ (++ rawText) $ dup digits head
 
-digits :: [Char]
-digits = ['0'..'9']
-
-consumeToken :: String -> Int -> (Int, Char, String)
-consumeToken text num =
-  let (head:tail) = text
-      isDigit = head `elem` digits
-  in
-    case (isDigit, num) of
-      (False, 0) -> (1, head, tail)
-      (False, _) -> (num, head, tail)
-      (True, _) -> consumeToken tail (10 * num + (digitToInt head))
-
-decodeToken :: Int -> Char -> String
-decodeToken 1 char = [char]
-decodeToken count char = replicate count char
+dup :: String -> Char -> String
+dup "" chr = [chr]
+dup digits chr = replicate (read digits :: Int) chr
 
 encode :: String -> String
 encode "" = ""
-encode text = encodeRec text ""
+encode text = encodeR text ""
 
-encodeRec :: String -> String -> String
-encodeRec "" encText = encText
-encodeRec (head:tail) encText =
-  let (count, char, nextText) = takeContinuousChars tail head 1
-      token = encodeToken count char
+encodeR :: String -> String -> String
+encodeR "" encodedText = encodedText
+encodeR rawText encodedText =
+  let head:tail = rawText
+      (token, restText) = span (\x -> x == head) rawText
+      newEncoded = encodeChar token
   in
-    encodeRec nextText (encText ++ token)
+    encodeR restText $ (++ newEncoded) $ encodedText
 
-takeContinuousChars :: String -> Char -> Int -> (Int, Char, String)
-takeContinuousChars "" lastChar count = (count, lastChar, "")
-takeContinuousChars text lastChar count =
-  let (head:tail) = text
-  in
-    if lastChar == head
-    then takeContinuousChars tail lastChar (count + 1)
-    else (count, lastChar, text)
-
-
-encodeToken :: Int -> Char -> String
-encodeToken 1 char = [char]
-encodeToken count char = (show count) ++ [char]
+encodeChar :: String -> String
+encodeChar [chr] = [chr]
+encodeChar token =
+  let count = length token
+  in (show count) ++ [(head token)]
